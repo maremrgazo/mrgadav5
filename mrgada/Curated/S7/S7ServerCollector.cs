@@ -99,7 +99,7 @@ public static partial class mrgada
                 i += s7VarBitLength;
             }
             string clientIp = ((IPEndPoint)Client.Client.RemoteEndPoint).Address.ToString();
-            Log.Information($"{_name} S7ServerCollector: Received data from S7ClientCollector {_clientNodes.FirstOrDefault(n => n.Ip == clientIp)}");
+            Log.Information($"{_name} S7ServerCollector: Received data from S7ClientCollector {_clientNodes.FirstOrDefault(n => n.Ip == clientIp).Name}");
         }
 
         private void ReadBroadcastProcessThread()

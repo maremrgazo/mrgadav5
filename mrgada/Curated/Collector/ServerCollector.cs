@@ -145,7 +145,7 @@ public static partial class mrgada
                                 lock (_clientsLock)
                                 {
                                     _clients.Add(client);
-                                    Log.Information($"{_name} ServerCollector, client connected: '{_clientNodes.FirstOrDefault(n => n.Ip == clientIp)}', number of connected clients: '{_clients.Count}'");
+                                    Log.Information($"{_name} ServerCollector, client connected: '{_clientNodes.FirstOrDefault(n => n.Ip == clientIp).Name}', number of connected clients: '{_clients.Count}'");
                                 }
                                 OnClientConnected(client);
                             }
@@ -184,7 +184,7 @@ public static partial class mrgada
                             if (!IsClientConnected(client))
                             {
                                 string clientIp = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
-                                Log.Information($"{_name} ServerCollector, client disconnected: '{_clientNodes.FirstOrDefault(n => n.Ip == clientIp)}', number of connected clients: '{_clients.Count}'");
+                                Log.Information($"{_name} ServerCollector, client disconnected: '{_clientNodes.FirstOrDefault(n => n.Ip == clientIp).Name}', number of connected clients: '{_clients.Count}'");
                                 _clients.RemoveAt(i);
                                 client.Close();
                                 OnClientDisconnected(client);
