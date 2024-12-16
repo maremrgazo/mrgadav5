@@ -21,6 +21,13 @@ public static partial class mrgada
                 b_broadcastFlag = false;
             }
         }
+        public void SetBroadcastFlag()
+        {
+            lock (o_broadcastFlagLock)
+            {
+                b_broadcastFlag = true;
+            }
+        }
 
         public S7Db(int num, int len)
         {

@@ -165,12 +165,17 @@ public static partial class mrgada
                             _plcConnected = false;
                             byte plcConnected = _plcConnected ? (byte)1 : (byte)0;
                             Broadcast(new byte[] { plcConnected });
+                            foreach (mrgada.S7Db s7Db in _s7PlcDbs)
+                            {
+                                s7Db.SetBroadcastFlag();
+                            }
+
                             _s7Plc.Open();
                         }
                         catch
                         {
-                            Log.Information($"{_name} S7ServerCollector Can't connect to S7 PLC, trying again in 30 seconds");
-                            Thread.Sleep(30000);
+                            Log.Information($"{_name} S7ServerCollector Can't connect to S7 PLC, trying again in 3 seconds");
+                            Thread.Sleep(3000);
                         }
                     }
                 }
