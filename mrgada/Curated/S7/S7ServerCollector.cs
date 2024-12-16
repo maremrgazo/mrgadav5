@@ -163,6 +163,8 @@ public static partial class mrgada
                         try
                         {
                             _plcConnected = false;
+                            byte plcConnected = _plcConnected ? (byte)1 : (byte)0;
+                            Broadcast(new byte[] { plcConnected });
                             _s7Plc.Open();
                         }
                         catch
