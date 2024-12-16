@@ -79,7 +79,7 @@ public static partial class mrgada
                 }
                 else
                 {
-                    Thread.Sleep(_connectHandlerTimeoutMilliseconds);
+                    Thread.Sleep(50);
                 }
             }
         }
