@@ -86,6 +86,14 @@ public static partial class mrgada
         protected override void OnRecieved(byte[] data)
         {
             _plcConnected = data[0] == (byte)1 ? true : false;
+            
+            if (_plcConnected)
+            {
+                lock (o_sendLock)
+                {
+                    _send.Clear();
+                }
+            }
 
             Log.Information($"{mrgada.ClientNodeName}: Client Recieved Broadcast, len ({data.Length}) from S7 ServerCollector: {_name}");
 
