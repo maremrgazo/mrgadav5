@@ -19,6 +19,9 @@ public static partial class mrgada
         private readonly short _plcSlot;
         protected S7.Net.Plc _s7Plc;
 
+        private bool _plcConnected = false;
+        public bool PlcConnected => _plcConnected;
+
         private S7ServerCollector _s7ServerCollector;
         protected S7ClientCollector _s7ClientCollector;
         private List<S7Db> _s7PlcDbs = [];
@@ -40,10 +43,10 @@ public static partial class mrgada
             switch (mrgada._nodeType)
             {
                 case mrgada.NodeType.Server:
-                    _s7ServerCollector = new(_name, _port, _s7Plc, _s7PlcDbs, readBroadcastProcessThreadMinIntervalMilliseconds);
+                    _s7ServerCollector = new(_name, _port, _s7Plc, _s7PlcDbs, _plcConnected, readBroadcastProcessThreadMinIntervalMilliseconds);
                     break;
                 case mrgada.NodeType.Client:
-                    _s7ClientCollector = new(_name, _port, _s7PlcDbs);
+                    _s7ClientCollector = new(_name, _port, _s7PlcDbs, _plcConnected);
                     break;
             }
         }

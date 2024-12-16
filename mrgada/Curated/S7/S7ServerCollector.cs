@@ -31,12 +31,15 @@ public static partial class mrgada
         private Thread? t_readBroadcastProcess;
         private bool b_readBroadcastProcess;
 
+        private bool _plcConnected;
 
-        public S7ServerCollector(string name, int port, S7.Net.Plc s7Plc, List<mrgada.S7Db> s7PlcDbs, int readBroadcastProcessThreadMinIntervalMilliseconds = 100) :base(name, port)
+
+        public S7ServerCollector(string name, int port, S7.Net.Plc s7Plc, List<mrgada.S7Db> s7PlcDbs, bool plcConnected, int readBroadcastProcessThreadMinIntervalMilliseconds = 100) :base(name, port)
         {
             _s7Plc = s7Plc;
             _s7PlcDbs = s7PlcDbs;
             _readBroadcastProcessThreadMinIntervalMilliseconds = readBroadcastProcessThreadMinIntervalMilliseconds;
+            _plcConnected = plcConnected;
         }
 
         protected override void OnStart()
@@ -107,64 +110,70 @@ public static partial class mrgada
         {
             while (b_readBroadcastProcess)
             {
-                _readBroadcastProcessThreadTimer.Restart();
-                if (_s7Plc.IsConnected)
+                try
                 {
-                    using (Operation.Time($"{_name} S7ServerCollector: Reading bytes from S7 PLC"))
+                    _readBroadcastProcessThreadTimer.Restart();
+                    if (_s7Plc.IsConnected)
                     {
-                        foreach (mrgada.S7Db s7Db in _s7PlcDbs)
+                        _plcConnected = true;
+                        using (Operation.Time($"{_name} S7ServerCollector: Reading bytes from S7 PLC"))
                         {
-                            // read
-                            s7Db.SetBytes
-                            (
-                            _s7Plc.ReadBytes(S7.Net.DataType.DataBlock, s7Db.Num, 0, s7Db.Len)
-                            );
-                            // process
-                            s7Db.ParseCVs();
-                        }
-                        foreach (mrgada.S7Db s7Db in _s7PlcDbs)
-                        {
-                            if (s7Db.BroadcastFlag)
+                            foreach (mrgada.S7Db s7Db in _s7PlcDbs)
                             {
-                                byte[] dbNum = BitConverter.GetBytes((short)s7Db.Num);
-                                byte[] chunkLength = BitConverter.GetBytes
-                                    (
-                                        (short)(sizeof(short) + sizeof(short) + s7Db.Bytes.Length)
-                                    );
-                                _s7broadcast.AddRange(chunkLength);
-                                _s7broadcast.AddRange(dbNum);
-                                _s7broadcast.AddRange(s7Db.Bytes);
+                                // read
+                                s7Db.SetBytes
+                                (
+                                _s7Plc.ReadBytes(S7.Net.DataType.DataBlock, s7Db.Num, 0, s7Db.Len)
+                                );
+                                // process
+                                s7Db.ParseCVs();
+                            }
+                            foreach (mrgada.S7Db s7Db in _s7PlcDbs)
+                            {
+                                if (s7Db.BroadcastFlag)
+                                {
+                                    byte[] dbNum = BitConverter.GetBytes((short)s7Db.Num);
+                                    byte[] chunkLength = BitConverter.GetBytes
+                                        (
+                                            (short)(sizeof(short) + sizeof(short) + s7Db.Bytes.Length)
+                                        );
+                                    _s7broadcast.AddRange(chunkLength);
+                                    _s7broadcast.AddRange(dbNum);
+                                    _s7broadcast.AddRange(s7Db.Bytes);
 
-                                s7Db.ResetBroadcastFlag();
+                                    s7Db.ResetBroadcastFlag();
+                                }
+                            }
+                            if (_s7broadcast.Count > 0)
+                            {
+                                // add broadcast plc_connected to start
+                                byte plcConnected = _plcConnected ? (byte)1 : (byte)0;
+                                _s7broadcast.InsertRange(0, [plcConnected]);
+                                // convert list to array
+                                Broadcast(_s7broadcast.ToArray());
+                                _s7broadcast.Clear();
                             }
                         }
-                        if (_s7broadcast.Count > 0)
+                        _readBroadcastProcessThreadTimer.Stop();
+                        int remainingTime = (int)(_readBroadcastProcessThreadMinIntervalMilliseconds - _readBroadcastProcessThreadTimer.ElapsedMilliseconds);
+                        if (remainingTime > 0) Thread.Sleep(remainingTime);
+
+                    }
+                    else
+                    {
+                        try
                         {
-                            // add broadcast length to start of list for partial transport checking
-                            Int32 broadcastLength = sizeof(Int32) + _s7broadcast.Count;
-                            _s7broadcast.InsertRange(0, BitConverter.GetBytes((Int32)broadcastLength));
-                            // convert list to array
-                            Broadcast(_s7broadcast.ToArray());
-                            _s7broadcast.Clear();
+                            _plcConnected = false;
+                            _s7Plc.Open();
+                        }
+                        catch
+                        {
+                            Log.Information($"{_name} S7ServerCollector Can't connect to S7 PLC, trying again in 30 seconds");
+                            Thread.Sleep(30000);
                         }
                     }
-                    _readBroadcastProcessThreadTimer.Stop();
-                    int remainingTime = (int)(_readBroadcastProcessThreadMinIntervalMilliseconds - _readBroadcastProcessThreadTimer.ElapsedMilliseconds);
-                    if (remainingTime > 0) Thread.Sleep(remainingTime);
-
                 }
-                else
-                {
-                    try
-                    {
-                        _s7Plc.Open();
-                    }
-                    catch
-                    {
-                        Log.Information($"{_name} S7ServerCollector Can't connect to S7 PLC, trying again in 30 seconds");
-                        Thread.Sleep(30000);
-                    }
-                }
+                catch { }
             }
         }
     }
