@@ -45,19 +45,21 @@ public static partial class mrgada
             lock (o_broadcastFlagLock)
             {
                 _bytes = bytes;
-                //if (!_bytes.SequenceEqual(_bytesOld)) /// testing
-                //{
-                b_broadcastFlag = true;
-                //short dbNum = (short)this.Num;
-                //byte[] dbNumByteArray = BitConverter.GetBytes(dbNum);
+                if (!_bytes.SequenceEqual(_bytesOld)) /// testing
+                {
+                    b_broadcastFlag = true;
+                    //short dbNum = (short)this.Num;
+                    //byte[] dbNumByteArray = BitConverter.GetBytes(dbNum);
 
-                //short BroadcastBytesLength = (short)(dbNumByteArray.Length + _bytes.Length + 2);
-                //byte[] BroadcastBytesLengthByteArray = BitConverter.GetBytes(BroadcastBytesLength);
+                    //short BroadcastBytesLength = (short)(dbNumByteArray.Length + _bytes.Length + 2);
+                    //byte[] BroadcastBytesLengthByteArray = BitConverter.GetBytes(BroadcastBytesLength);
 
-                //_Acquisitor.AcquisitorBroadcastBytes.AddRange(BroadcastBytesLengthByteArray);
-                //_Acquisitor.AcquisitorBroadcastBytes.AddRange(dbNumByteArray);
-                //    //_Acquisitor.AcquisitorBroadcastBytes.AddRange(Bytes);
-                //}
+                    //_Acquisitor.AcquisitorBroadcastBytes.AddRange(BroadcastBytesLengthByteArray);
+                    //_Acquisitor.AcquisitorBroadcastBytes.AddRange(dbNumByteArray);
+                    //    //_Acquisitor.AcquisitorBroadcastBytes.AddRange(Bytes);
+                    //}
+                    //_bytes.CopyTo(_bytesOld, 0);
+                }
                 _bytesOld = _bytes;
             }
         }
