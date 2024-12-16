@@ -32,8 +32,6 @@ public static partial class mrgada
         private bool b_connectHandler;
         protected readonly int _connectHandlerTimeoutMilliseconds;
 
-        private string _clientNodeName;
-
         public bool Started => _started;
         public bool Stopped => !_started;
 
@@ -47,8 +45,6 @@ public static partial class mrgada
 
             _connectHandlerTimeoutMilliseconds = connectHandlerTimeoutMilliseconds;
             _receiveThreadTimeoutMilliseconds = receiveThreadTimeoutMilliseconds;
-
-            _clientNodeName = _clientNodes.FirstOrDefault(n => (n.Ip == (Dns.GetHostAddresses(Dns.GetHostName()).FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)).ToString())).Name;
 
             mrgada.AddClientCollector(this);
         }

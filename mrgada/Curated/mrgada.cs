@@ -1,10 +1,13 @@
 ﻿#pragma warning disable CS8981 // suppress naming rule violation
 #pragma warning disable CS8618 // suppress non-null value when exiting constructor
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
 
 using Serilog;
 using S7.Net;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Net.Sockets;
+using System.Net;
 
 public static partial class mrgada
 {
@@ -12,6 +15,8 @@ public static partial class mrgada
     private static int _serverPort;
     private static NodeType _nodeType;
     private static bool _started = false;
+    private static string _clientNodeName;
+    public static string ClientNodeName => _clientNodeName;
 
     public enum NodeType
     {
@@ -58,6 +63,8 @@ public static partial class mrgada
     public static void AddClientCollector(ClientCollector clientCollector) { _clientCollectors.Add(clientCollector); }
     public static void Start()
     {
+        _clientNodeName = _clientNodes.FirstOrDefault(n => (n.Ip == (Dns.GetHostAddresses(Dns.GetHostName()).FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)).ToString())).Name;
+
         Log.Information("mrgada: Started!");
         switch (mrgada._nodeType)
         {
