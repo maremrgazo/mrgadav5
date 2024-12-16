@@ -63,6 +63,11 @@ public MRP6Config MRP6 { get; set; }
 
         mrgada.Start();
 
+        if (nodeType == mrgada.NodeType.Server)
+        {
+            Historian.Start();
+        }
+
         Thread.Sleep(Timeout.Infinite);
     }
 }
