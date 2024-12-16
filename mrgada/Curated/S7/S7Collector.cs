@@ -1,6 +1,9 @@
 ﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 
 using S7.Net;
+using System.Net.Sockets;
+using System.Net;
 using static mrgada;
 
 public static partial class mrgada
@@ -18,6 +21,8 @@ public static partial class mrgada
         private S7ServerCollector _s7ServerCollector;
         protected S7ClientCollector _s7ClientCollector;
         private List<S7Db> _s7PlcDbs = [];
+
+        private string _clientNodeName;
 
 
         public S7Collector(string name, int port, S7.Net.CpuType cpuType, string plcIp, short plcRack, short plcSlot, int readBroadcastProcessThreadMinIntervalMilliseconds = 100)
