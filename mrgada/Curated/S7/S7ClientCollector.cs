@@ -85,19 +85,12 @@ public static partial class mrgada
         }
         protected override void OnRecieved(byte[] data)
         {
-            _plcConnected = data[0] == (byte)1 ? true : false;
-            
-            if (_plcConnected)
-            {
-                lock (o_sendLock)
-                {
-                    _send.Clear();
-                }
-            }
+            Int32 broadcastLength = BitConverter.ToInt32(data, 0);
+            bool isPartial = data.Length != broadcastLength;
 
             Log.Information($"{mrgada.ClientNodeName}: Client Recieved Broadcast, len ({data.Length}) from S7 ServerCollector: {_name}");
 
-            int i = sizeof(byte); // skip plcConnected
+            int i = sizeof(Int32); // skip plcConnected
             while (i < data.Length)
             {
                 short i16_chunkLength = BitConverter.ToInt16(data, i);

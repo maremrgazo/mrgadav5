@@ -145,9 +145,9 @@ public static partial class mrgada
                             }
                             if (_s7broadcast.Count > 0)
                             {
-                                // add broadcast plc_connected to start
-                                byte plcConnected = _plcConnected ? (byte)1 : (byte)0;
-                                _s7broadcast.InsertRange(0, [plcConnected]);
+                                // add broadcast length to start of list for partial transport checking
+                                Int32 broadcastLength = sizeof(Int32) + _s7broadcast.Count;
+                                _s7broadcast.InsertRange(0, BitConverter.GetBytes((Int32)broadcastLength));
                                 // convert list to array
                                 Broadcast(_s7broadcast.ToArray());
                                 _s7broadcast.Clear();
@@ -162,9 +162,9 @@ public static partial class mrgada
                     {
                         try
                         {
-                            _plcConnected = false;
-                            byte plcConnected = _plcConnected ? (byte)1 : (byte)0;
-                            Broadcast(new byte[] { plcConnected });
+                            //    _plcConnected = false;
+                            //    byte plcConnected = _plcConnected ? (byte)1 : (byte)0;
+                            //    Broadcast(new byte[] { plcConnected });
                             foreach (mrgada.S7Db s7Db in _s7PlcDbs)
                             {
                                 s7Db.SetBroadcastFlag();
