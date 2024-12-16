@@ -2,7 +2,7 @@
 {
     public static void Main(string[] args)
     {
-        mrgada.Init("192.168.64.113", 61000, mrgada.NodeType.Server);
+        mrgada.Init("192.168.64.113", 61000, mrgada.NodeType.Client);
 
         mrgada.AddClientNode(new("192.168.64.122", "clientA"));
         mrgada.AddClientNode(new("192.168.64.113", "debugging"));
