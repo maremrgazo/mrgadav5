@@ -5,6 +5,7 @@ using S7.Net;
 using System.Net.Sockets;
 using System.Net;
 using static mrgada;
+using System.Collections.Generic;
 
 public static partial class mrgada
 {

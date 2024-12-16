@@ -4,6 +4,7 @@
 using Serilog;
 using S7.Net;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
 public static partial class mrgada
 {
