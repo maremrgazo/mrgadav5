@@ -31,15 +31,14 @@ public static partial class mrgada
         private Thread? t_readBroadcastProcess;
         private bool b_readBroadcastProcess;
 
-        private bool _plcConnected;
+        private bool _plcConnected = false;
+        public bool PlcConnected => _plcConnected;
 
-
-        public S7ServerCollector(string name, int port, S7.Net.Plc s7Plc, List<mrgada.S7Db> s7PlcDbs, bool plcConnected, int readBroadcastProcessThreadMinIntervalMilliseconds = 100) :base(name, port)
+        public S7ServerCollector(string name, int port, S7.Net.Plc s7Plc, List<mrgada.S7Db> s7PlcDbs, int readBroadcastProcessThreadMinIntervalMilliseconds = 100) :base(name, port)
         {
             _s7Plc = s7Plc;
             _s7PlcDbs = s7PlcDbs;
             _readBroadcastProcessThreadMinIntervalMilliseconds = readBroadcastProcessThreadMinIntervalMilliseconds;
-            _plcConnected = plcConnected;
         }
 
         protected override void OnStart()

@@ -28,12 +28,12 @@ public static partial class mrgada
         private bool b_send;
         private object o_sendLock = new();
         private int i_sendTimeout = 200;
-        private bool _plcConnected;
+        private bool _plcConnected = false;
+        public bool PlcConnected => _plcConnected;
 
-        public S7ClientCollector(string name, int port, List<mrgada.S7Db> s7PlcDbs, bool plcConnected) :base(name, port)
+        public S7ClientCollector(string name, int port, List<mrgada.S7Db> s7PlcDbs) :base(name, port)
         {
             _s7PlcDbs = s7PlcDbs;
-            _plcConnected = plcConnected;
         }
         public void AddToSendQueue(byte[] data)
         {
