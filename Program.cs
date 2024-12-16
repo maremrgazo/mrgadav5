@@ -3,30 +3,30 @@ using static Program;
 
 public class Program
 {
-    public class MRP6Config
+public class MRP6Config
 {
-    public string Name { get; set; }
-    public int Port { get; set; }
-    public string CpuType { get; set; }
-    public string Ip { get; set; }
-    public short Rack { get; set; }
-    public short Slot { get; set; }
-    public int Timeout { get; set; }
+public string Name { get; set; }
+public int Port { get; set; }
+public string CpuType { get; set; }
+public string Ip { get; set; }
+public short Rack { get; set; }
+public short Slot { get; set; }
+public int Timeout { get; set; }
 }
 
 public class ClientNodeConfig
 {
-    public string Ip { get; set; }
-    public string Name { get; set; }
+public string Ip { get; set; }
+public string Name { get; set; }
 }
 
 public class MrgadaConfig
 {
-    public string ServerIp { get; set; }
-    public int ServerPort { get; set; }
-    public string NodeType { get; set; }
-    public List<ClientNodeConfig> ClientNodes { get; set; }
-    public MRP6Config MRP6 { get; set; }
+public string ServerIp { get; set; }
+public int ServerPort { get; set; }
+public string NodeType { get; set; }
+public List<ClientNodeConfig> ClientNodes { get; set; }
+public MRP6Config MRP6 { get; set; }
 }
     public static void Main(string[] args)
     {
