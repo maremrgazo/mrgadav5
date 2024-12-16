@@ -27,7 +27,7 @@ public static partial class mrgada
         private Thread? t_send;
         private bool b_send;
         private object o_sendLock = new();
-        private int i_sendTimeout = 50;
+        private int i_sendTimeout = 200;
         private bool _plcConnected = false;
         public bool PlcConnected => _plcConnected;
 
