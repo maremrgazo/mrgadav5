@@ -164,7 +164,7 @@ public static partial class mrgada
             catch (Exception ex)
             {
                 Log.Warning($"Receive thread encountered an error: {ex.Message}");
-                _connected = false;
+                //_connected = false;
             }
         }
 
