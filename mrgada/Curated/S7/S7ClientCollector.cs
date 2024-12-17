@@ -45,11 +45,10 @@ public static partial class mrgada
 
         protected override void OnStart()
         {
+            b_send = true;
             t_send = new(SendThread);
             t_send.IsBackground = true;
             t_send.Start();
-
-            b_send = true;
         }
         protected override void OnStop()
         {

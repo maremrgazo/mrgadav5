@@ -43,11 +43,10 @@ public static partial class mrgada
 
         protected override void OnStart()
         {
+            b_readBroadcastProcess = true;
             t_readBroadcastProcess = new(ReadBroadcastProcessThread);
             t_readBroadcastProcess.IsBackground = true;
             t_readBroadcastProcess.Start();
-
-            b_readBroadcastProcess = true;
         }
 
         protected override void OnStop()
