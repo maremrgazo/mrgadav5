@@ -31,7 +31,7 @@ public static partial class mrgada
 
         private Thread t_clientListener;
         private bool b_clientListener;
-        private readonly int _clientListenerThreadTimeoutMilliseconds = 100;
+        private readonly int _clientListenerThreadTimeoutMilliseconds = 50;
 
         Thread t_clientDisconnect;
         bool b_clientDisconnect;

@@ -63,19 +63,19 @@ public static partial class mrgada
             {
                 if (_connected)
                 {
-                    if (_send.Count > 0)
+                    lock (o_sendLock)
                     {
-                        List<byte> _finallSend = [];
-                        lock (o_sendLock)
+                        if (_send.Count > 0)
                         {
-                            Int32 chunkLength = sizeof(Int32) + _send.Count;
-                            _send.InsertRange(0, BitConverter.GetBytes((Int32)chunkLength));
-                            _finallSend.AddRange(_send);
-                            _send.Clear();
+                            List<byte> _finallSend = [];
+                                Int32 chunkLength = sizeof(Int32) + _send.Count;
+                                _send.InsertRange(0, BitConverter.GetBytes((Int32)chunkLength));
+                                _finallSend.AddRange(_send);
+                                _send.Clear();
+                            Send(_finallSend.ToArray());
                         }
-                        Send(_finallSend.ToArray());
                     }
-                    else Thread.Sleep(i_sendTimeout);
+                    Thread.Sleep(i_sendTimeout);
                 }
                 else
                 {
