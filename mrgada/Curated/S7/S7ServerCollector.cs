@@ -34,7 +34,7 @@ public static partial class mrgada
         private bool _plcConnected = false;
         public bool PlcConnected => _plcConnected;
 
-        public S7ServerCollector(string name, int port, S7.Net.Plc s7Plc, List<mrgada.S7Db> s7PlcDbs, int readBroadcastProcessThreadMinIntervalMilliseconds = 100) :base(name, port)
+        public S7ServerCollector(string name, int port, S7.Net.Plc s7Plc, List<mrgada.S7Db> s7PlcDbs, int readBroadcastProcessThreadMinIntervalMilliseconds = 50) :base(name, port)
         {
             _s7Plc = s7Plc;
             _s7PlcDbs = s7PlcDbs;

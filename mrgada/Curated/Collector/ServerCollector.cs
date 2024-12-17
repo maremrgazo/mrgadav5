@@ -42,7 +42,7 @@ public static partial class mrgada
             string name, 
             int port, 
             int clientConnectThreadTimeoutMilliseconds = 100, 
-            int clientListenerThreadTimeoutMilliseconds = 100,
+            int clientListenerThreadTimeoutMilliseconds = 50,
             int clientDisconnectThreadTimeoutMilliseconds = 500
             )
         {

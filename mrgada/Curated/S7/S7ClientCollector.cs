@@ -61,26 +61,31 @@ public static partial class mrgada
         {
             while (b_send)
             {
-                if (_connected)
+                try
                 {
-                    lock (o_sendLock)
+
+                    if (_connected)
                     {
-                        if (_send.Count > 0)
+                        lock (o_sendLock)
                         {
-                            List<byte> _finallSend = [];
+                            if (_send.Count > 0)
+                            {
+                                List<byte> _finallSend = [];
                                 Int32 chunkLength = sizeof(Int32) + _send.Count;
                                 _send.InsertRange(0, BitConverter.GetBytes((Int32)chunkLength));
                                 _finallSend.AddRange(_send);
                                 _send.Clear();
-                            Send(_finallSend.ToArray());
+                                Send(_finallSend.ToArray());
+                            }
                         }
+                        Thread.Sleep(i_sendTimeout);
                     }
-                    Thread.Sleep(i_sendTimeout);
+                    else
+                    {
+                        Thread.Sleep(_connectHandlerTimeoutMilliseconds);
+                    }
                 }
-                else
-                {
-                    Thread.Sleep(_connectHandlerTimeoutMilliseconds);
-                }
+                catch { }
             }
         }
         protected override void OnRecieved(byte[] data)
