@@ -90,17 +90,20 @@ public static partial class mrgada
 
             b_clientConnect = true;
             t_clientConnect = new Thread(ClientConnectThread);
-            t_clientConnect.IsBackground = true;
+            t_clientConnect.IsBackground = false;
+            t_clientConnect.Priority = ThreadPriority.AboveNormal;
             t_clientConnect.Start();
 
             b_clientDisconnect = true;
             t_clientDisconnect = new Thread(ClientDisconnectThread);
-            t_clientDisconnect.IsBackground = true;
+            t_clientDisconnect.IsBackground = false;
+            t_clientDisconnect.Priority = ThreadPriority.AboveNormal;
             t_clientDisconnect.Start();
 
             b_clientListener = true;
             t_clientListener = new Thread(ClientListenerThread);
-            t_clientListener.IsBackground = true;
+            t_clientListener.IsBackground = false;
+            t_clientListener.Priority = ThreadPriority.AboveNormal;
             t_clientListener.Start();
 
             _started = true;
@@ -174,26 +177,32 @@ public static partial class mrgada
         {
             while (b_clientDisconnect)
             {
-                lock (_clientsLock)
+                try
                 {
-                    if (_clients.Count != 0)
-                    {
-                        for (int i = _clients.Count - 1; i >= 0; i--)
-                        {
-                            TcpClient client = _clients[i];
 
-                            if (!IsClientConnected(client))
+                    lock (_clientsLock)
+                    {
+                        if (_clients.Count != 0)
+                        {
+                            for (int i = _clients.Count - 1; i >= 0; i--)
                             {
-                                string clientIp = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
-                                Log.Information($"{_name} ServerCollector, client disconnected: '{_clientNodes.FirstOrDefault(n => n.Ip == clientIp).Name}', number of connected clients: '{_clients.Count}'");
-                                _clients.RemoveAt(i);
-                                client.Close();
-                                OnClientDisconnected(client);
+                                TcpClient client = _clients[i];
+
+                                if (!IsClientConnected(client))
+                                {
+                                    string clientIp = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
+                                    Log.Information($"{_name} ServerCollector, client disconnected: '{_clientNodes.FirstOrDefault(n => n.Ip == clientIp).Name}', number of connected clients: '{_clients.Count}'");
+                                    _clients.RemoveAt(i);
+                                    client.Close();
+                                    OnClientDisconnected(client);
+                                }
                             }
                         }
                     }
+                    Thread.Sleep(_clientDisconnectThreadTimeoutMilliseconds);
+
                 }
-                Thread.Sleep(_clientDisconnectThreadTimeoutMilliseconds);
+                catch { }
             }
         }
         private bool IsClientConnected(TcpClient client)
@@ -215,28 +224,32 @@ public static partial class mrgada
         {
             while (b_clientListener)
             {
-                lock (_clientsLock)
+                try
                 {
-                    foreach (var client in _clients)
+                    lock (_clientsLock)
                     {
-                        try
+                        foreach (var client in _clients)
                         {
-                            if (client.Available > 0) // Check if data is available
+                            try
                             {
-                                NetworkStream ns_stream = client.GetStream();
-                                byte[] data = new byte[client.Available];
-                                int bytesRead = ns_stream.Read(data, 0, data.Length);
+                                if (client.Available > 0) // Check if data is available
+                                {
+                                    NetworkStream ns_stream = client.GetStream();
+                                    byte[] data = new byte[client.Available];
+                                    int bytesRead = ns_stream.Read(data, 0, data.Length);
 
-                                if (bytesRead > 0) OnRecieved(client, data);
+                                    if (bytesRead > 0) OnRecieved(client, data);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Information($"{_name} ServerCollector: exception in ClientListenerThread: {ex}");
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            Log.Information($"{_name} ServerCollector: exception in ClientListenerThread: {ex}");
-                        }
                     }
+                    Thread.Sleep(_clientListenerThreadTimeoutMilliseconds);
                 }
-                Thread.Sleep(_clientListenerThreadTimeoutMilliseconds);
+                catch { }
             }
         }
     }

@@ -52,9 +52,13 @@ public static partial class mrgada
             lock (o_broadcastFlagLock)
             {
                 _bytes = bytes;
+                b_broadcastFlag = true; /// testing
                 if (!_bytes.SequenceEqual(_bytesOld)) /// testing
                 {
-                    b_broadcastFlag = true;
+                    b_broadcastFlag = true; /// testing
+
+
+
                     //short dbNum = (short)this.Num;
                     //byte[] dbNumByteArray = BitConverter.GetBytes(dbNum);
 

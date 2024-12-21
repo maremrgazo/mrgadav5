@@ -45,7 +45,8 @@ public static partial class mrgada
         {
             b_readBroadcastProcess = true;
             t_readBroadcastProcess = new(ReadBroadcastProcessThread);
-            t_readBroadcastProcess.IsBackground = true;
+            t_readBroadcastProcess.IsBackground = false;
+            t_readBroadcastProcess.Priority = ThreadPriority.AboveNormal;
             t_readBroadcastProcess.Start();
         }
 
